@@ -32,6 +32,8 @@ class Blockchain:
         new_proof = 1
         check_proof = False
         while not check_proof:
+            #need to use encode required by sha256
+            # hexdigest returns hexadecimal value 
             hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest()
             if hash_operation[:4] == LEADING_ZEROS:
                 check_proof =True
@@ -40,6 +42,7 @@ class Blockchain:
         return new_proof
 
     def hash(self, block):
+        #need to use encode required by sha256 
         encoded_block = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
 
