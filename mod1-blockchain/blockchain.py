@@ -19,6 +19,7 @@ class Blockchain:
     def create_block(self, proof, previous_hash):
         block = {'index':len(self.chain)+1,
                 'timestamp': str(datetime.datetime.now()),
+                'data': f'this fild just show some extra data, like index={len(self.chain)+1} and prev-hash={previous_hash}',
                 'proof': proof,
                 'previous_hash': previous_hash
                 }
@@ -53,6 +54,7 @@ class Blockchain:
         block_index = 1 #value for index that is in the block
         while block_index < len(chain):
             current_block = chain[block_index]
+            #first check equality on hashes
             if current_block['previous_hash'] != self.hash(previous_block):
                 return False
             proof_previous_block = previous_block['proof']

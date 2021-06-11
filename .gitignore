@@ -1,0 +1,6 @@
+*.pyc
+
+
+#folders
+/fromweb
+/__pycache__
