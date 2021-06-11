@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from blockchain import Blockchain
 #definig the mining
 #create the flask app
