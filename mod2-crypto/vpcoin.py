@@ -8,13 +8,12 @@ from urllib.parse import urlparse
 # building Blockchain
 
 PROOF = 1
-INITIAL_HASH = '0'
+INITIAL_HASH = "0"
 
-LEADING_ZEROS = '0000'
+LEADING_ZEROS = "0000"
 
 
 class Blockchain:
-
     def __init__(self):
         self.chain = []
         # first create a transaction before a block creation
@@ -25,13 +24,14 @@ class Blockchain:
         self.nodes = set()
 
     def create_block(self, proof, previous_hash):
-        block = {'index': len(self.chain)+1,
-                'timestamp': str(datetime.datetime.now()),
-                'proof': proof,
-                'data': f'this fild just show some extra data, like index={len(self.chain)+1} and prev-hash={previous_hash}',
-                'previous_hash': previous_hash,
-                'transactions': self.transations
-                }
+        block = {
+            "index": len(self.chain) + 1,
+            "timestamp": str(datetime.datetime.now()),
+            "proof": proof,
+            "data": f"this fild just show some extra data, like index={len(self.chain)+1} and prev-hash={previous_hash}",
+            "previous_hash": previous_hash,
+            "transactions": self.transations,
+        }
         self.transations = []
         self.chain.append(block)
         return block
@@ -45,7 +45,9 @@ class Blockchain:
         while not check_proof:
             # need to use encode required by sha256
             # hexdigest returns hexadecimal value
-            hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest()
+            hash_operation = hashlib.sha256(
+                str(new_proof ** 2 - previous_proof ** 2).encode()
+            ).hexdigest()
             if hash_operation[:4] == LEADING_ZEROS:
                 check_proof = True
             else:
@@ -66,11 +68,13 @@ class Blockchain:
         while block_index < len(chain):
             current_block = chain[block_index]
             # first check equality on hashes
-            if current_block['previous_hash'] != self.hash(previous_block):
+            if current_block["previous_hash"] != self.hash(previous_block):
                 return False
-            proof_previous_block = previous_block['proof']
-            proof_current_block = current_block['proof']
-            hash_operation = hashlib.sha256(str(proof_current_block ** 2 - proof_previous_block ** 2).encode()).hexdigest()
+            proof_previous_block = previous_block["proof"]
+            proof_current_block = current_block["proof"]
+            hash_operation = hashlib.sha256(
+                str(proof_current_block ** 2 - proof_previous_block ** 2).encode()
+            ).hexdigest()
             # second check proof is valid
             if hash_operation[:4] != LEADING_ZEROS:
                 return False
@@ -79,19 +83,18 @@ class Blockchain:
         return True
 
     def add_transaction(self, sender, receiver, amount):
-        self.transations.append({
-            'sender': sender,
-            'receiver': receiver,
-            'amount': amount
-        })
+        self.transations.append(
+            {"sender": sender, "receiver": receiver, "amount": amount}
+        )
         # return the index of the block = previous block +1
         previous_block = self.get_previous_block()
-        return previous_block['index'] + 1
+        return previous_block["index"] + 1
 
     def add_node(self, address):
         parsed_url = urlparse(address)
         self.nodes.add(parsed_url.netloc)
-# concesus resolver -- replace the chain with the longest one
+
+    # concesus resolver -- replace the chain with the longest one
 
     def replace_chain(self):
         net = self.nodes
@@ -99,10 +102,10 @@ class Blockchain:
         max_length = len(self.chain)
         # for eac node in the net we requests the  lenght of the chain
         for node in net:
-            response = requests.get(f'http://{node}/get_chain')
+            response = requests.get(f"http://{node}/get_chain")
             if response.status_code == 200:
-                node_chain_length = response.json['length']
-                node_chain = response.json['chain']
+                node_chain_length = response.json["length"]
+                node_chain = response.json["chain"]
                 if node_chain_length > max_length and self.is_chain_valid(node_chain):
                     max_length = node_chain_length
                     longest_chain = node_chain
